@@ -1,7 +1,7 @@
 const dbEnvelopes = require("../config/db.js");
 const router = require("../routes/envelopes");
 
-const { findById, createId } = require("../helpers/db-helpers.js");
+const { findById, createId, deleteById } = require("../helpers/db-helpers.js");
 
 exports. getEnvelopes = async (req, res) => {
     try {
@@ -32,7 +32,7 @@ exports.getEnvelopesById = async (req, res) => {
 
 exports.addEnvelope = async (req, res) => {
     try {
-        console.log(req || 'req.body')
+        console.log(req.body || 'req.body')
 
         const { title, budget } = req.body;
 
@@ -55,9 +55,50 @@ exports.addEnvelope = async (req, res) => {
 
 exports.updateEnvelope = async(req, res) => {
     try {
+        const { title, budget } = req.body;
+        const { id } = req.params;
+
+        const envelopes = await dbEnvelopes;
+        const envelope = findById(envelopes, id);
+                
+        console.log(envelope);
+
+        if (!envelope) {
+            return res.status(404).send({
+                message: "Envelope not found"
+            })
+        }
+
+        envelope.title = title;
+        envelope.budget = budget;
+
+        res.status(201).send(envelopes)
         
     } catch (error) {
         res.status(500).send(error)
         
+    }
+}
+
+exports.deleteEnvelope = async (req, res) => {
+    try {
+
+        const { id } = req.params;
+
+        const envelopes = await dbEnvelopes;
+        const envelope = findById(envelopes, id);
+
+        if (!envelope) {
+            return res.status(404).send({
+                message: "Envelope not found"
+            })
+        }
+
+        const updatedEnvelopes = deleteById(envelopes, id);
+
+        return res.status(204).send(updatedEnvelopes);
+        
+    } catch (error) {
+        res.status(500).send(error);
     }
 }

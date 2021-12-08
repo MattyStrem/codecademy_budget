@@ -21,4 +21,17 @@ module.exports = {
         return record;
     },
 
+    deleteById(data, recordId) {
+        const index = data.findIndex(function (item) {
+            return item.id === parseInt(recordId)
+        })
+
+        if (index == -1 ) {
+            console.log("invailid Index");
+        }
+
+        data.splice(index, 1);
+        return data;
+    },
+
 }

@@ -102,3 +102,38 @@ exports.deleteEnvelope = async (req, res) => {
         res.status(500).send(error);
     }
 }
+
+exports.transfer = async (req, res) => {
+    try {
+        
+        const envelopes = await dbEnvelopes;
+
+        console.log(req.params);
+
+        const { fromId, toId} = req.params;
+        const { amount } = req.body;
+
+        const originEnv = findById(envelopes, fromId);
+        const destinationEnv = findById(envelopes, toId);
+
+        if (!originEnv || !destinationEnv) {
+            return res.status(404).send({
+                message: "Envelope not found",
+            })
+        }
+
+        if (originEnv.budget < amount) {
+            return res.status(400).send({
+                message: "Not enough money to transfer"
+            })
+        }
+
+        originEnv.budget -= amount;
+        destinationEnv.budget += amount;
+
+        return res.status(201).send(originEnv);
+
+    } catch (error) {
+        res.status(500).send(error);
+    }
+}

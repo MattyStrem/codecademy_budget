@@ -7,6 +7,7 @@ const {
     addEnvelope,
     updateEnvelope,
     deleteEnvelope,
+    transfer,
 } = require("../controllers/envelope_controller.js");
 
 //get all envelopes
@@ -21,6 +22,8 @@ router.post("/", addEnvelope);
 //Put - updates and existing envelope
 router.put("/:id", updateEnvelope);
 
-router.delete("/:id", deleteEnvelope)
+router.delete("/:id", deleteEnvelope);
+
+router.post("/:fromId/transfer/:toId", transfer);
 
 module.exports = router;
